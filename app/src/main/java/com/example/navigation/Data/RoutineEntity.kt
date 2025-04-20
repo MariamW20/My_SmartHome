@@ -1,0 +1,12 @@
+package com.example.navigation.data
+
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity(tableName = "routines")
+data class RoutineEntity(
+    @PrimaryKey val id: Int,
+    val name: String,
+    val time: String,
+    val recurrence: String
+)
