@@ -1,13 +1,47 @@
 package com.example.navigation.pages
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Build
+import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -16,38 +50,26 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-
-data class Routine(
-    val id: Int,
-    val name: String,
-    val time: String,
-    val recurrence: String
-)
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.navigation.data.RoutineEntity
+import com.example.navigation.data.RoutineViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RoutinesPage(modifier: Modifier = Modifier) {
-    // State for routines list
-    var routines by remember {
-        mutableStateOf(
-            listOf(
-                Routine(1, "Security Lights on", "8:00pm", "Every day"),
-                Routine(2, "Security Lights off", "6:00am", "Every day"),
-                Routine(3, "Coffee Maker on", "7:00am", "Week days")
-            )
-        )
-    }
+fun RoutinesPage(modifier: Modifier = Modifier, routineViewModel: RoutineViewModel = viewModel()) {
+    // Collecting routines from the ViewModel (StateFlow)
+    val routines by routineViewModel.routines.collectAsState()
 
     // Derived state for empty check
     val hasRoutines = routines.isNotEmpty()
 
     // State for edit dialog
     var showEditDialog by remember { mutableStateOf(false) }
-    var editingRoutine by remember { mutableStateOf<Routine?>(null) }
+    var editingRoutine by remember { mutableStateOf<RoutineEntity?>(null) }
 
     // State for delete confirmation dialog
     var showDeleteDialog by remember { mutableStateOf(false) }
-    var routineToDelete by remember { mutableStateOf<Routine?>(null) }
+    var routineToDelete by remember { mutableStateOf<RoutineEntity?>(null) }
 
     // State for add dialog
     var showAddDialog by remember { mutableStateOf(false) }
@@ -119,9 +141,7 @@ fun RoutinesPage(modifier: Modifier = Modifier) {
             routine = editingRoutine!!,
             onDismiss = { showEditDialog = false },
             onSave = { updatedRoutine ->
-                routines = routines.map {
-                    if (it.id == updatedRoutine.id) updatedRoutine else it
-                }
+                routineViewModel.updateRoutine(updatedRoutine)
                 showEditDialog = false
             }
         )
@@ -136,7 +156,7 @@ fun RoutinesPage(modifier: Modifier = Modifier) {
             confirmButton = {
                 TextButton(
                     onClick = {
-                        routines = routines.filter { it.id != routineToDelete!!.id }
+                        routineViewModel.deleteRoutine(routineToDelete!!)
                         showDeleteDialog = false
                     }
                 ) {
@@ -155,7 +175,7 @@ fun RoutinesPage(modifier: Modifier = Modifier) {
     if (showAddDialog) {
         RoutineDialog(
             isAdd = true,
-            routine = Routine(
+            routine = RoutineEntity(
                 id = (routines.maxOfOrNull { it.id } ?: 0) + 1,
                 name = "",
                 time = "",
@@ -163,7 +183,7 @@ fun RoutinesPage(modifier: Modifier = Modifier) {
             ),
             onDismiss = { showAddDialog = false },
             onSave = { newRoutine ->
-                routines = routines + newRoutine
+                routineViewModel.insertRoutine(newRoutine)
                 showAddDialog = false
             }
         )
@@ -174,9 +194,9 @@ fun RoutinesPage(modifier: Modifier = Modifier) {
 @Composable
 fun RoutineDialog(
     isAdd: Boolean,
-    routine: Routine,
+    routine: RoutineEntity,
     onDismiss: () -> Unit,
-    onSave: (Routine) -> Unit
+    onSave: (RoutineEntity) -> Unit
 ) {
     var name by remember { mutableStateOf(routine.name) }
     var time by remember { mutableStateOf(routine.time) }
@@ -213,7 +233,7 @@ fun RoutineDialog(
             TextButton(
                 onClick = {
                     onSave(
-                        Routine(
+                        RoutineEntity(
                             id = routine.id,
                             name = name,
                             time = time,
@@ -235,7 +255,7 @@ fun RoutineDialog(
 
 @Composable
 fun RoutineItem(
-    routine: Routine,
+    routine: RoutineEntity,
     onEdit: () -> Unit,
     onDelete: () -> Unit
 ) {
