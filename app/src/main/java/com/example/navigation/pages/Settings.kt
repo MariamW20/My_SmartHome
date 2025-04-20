@@ -1,5 +1,9 @@
 package com.example.navigation.pages
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.coroutines.flow.StateFlow
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -20,25 +24,27 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.navigation.data.SettingsViewModel
+import androidx.compose.runtime.collectAsState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsPage(modifier: Modifier = Modifier) {
-    // State variables for user settings
-    var userName by remember { mutableStateOf("John Doe") }
-    var userEmail by remember { mutableStateOf("john@someorg.com") }
-    var selectedColor by remember { mutableStateOf(Color(0xFFFFC107)) }
-    var autoArmSecurityEnabled by remember { mutableStateOf(true) }
-    var appNotificationsEnabled by remember { mutableStateOf(false) }
+fun SettingsPage(
+    modifier: Modifier = Modifier,
+    viewModel: SettingsViewModel
+) {
+    val userName by viewModel.userName.collectAsState()
+    val userEmail by viewModel.userEmail.collectAsState()
+    val selectedColor by viewModel.selectedColor.collectAsState()
+    val autoArmSecurityEnabled by viewModel.autoArm.collectAsState()
+    val appNotificationsEnabled by viewModel.notifications.collectAsState()
 
-    // State for edit dialog
     var showEditUserDialog by remember { mutableStateOf(false) }
     var showColorPicker by remember { mutableStateOf(false) }
 
-    // Available app colors
     val appColors = listOf(
-        Color.Yellow,
-        Color.Red,
+        Color(0xFFFFEB3B), // Yellow
+        Color(0xFFF44336), // Red
         Color(0xFF03A9F4), // Blue
         Color(0xFF4CAF50), // Green
         Color(0xFFFF9800), // Orange
@@ -72,183 +78,87 @@ fun SettingsPage(modifier: Modifier = Modifier) {
                 .verticalScroll(rememberScrollState())
                 .background(Color(0xFFFDFCFC))
         ) {
-            // User Settings Section
-            SectionHeader(title = "User Settings")
-
+            // User Info
+            SectionHeader("User Settings")
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
+                modifier = Modifier.fillMaxWidth().padding(16.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Box(
-                    modifier = Modifier
-                        .size(40.dp)
-                        .background(Color(0xFFFDFCFC), CircleShape),
+                    modifier = Modifier.size(40.dp).background(Color(0xFFFDFCFC), CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Person,
-                        contentDescription = "User",
-                        tint = Color(0xFFFFC107)
-                    )
+                    Icon(Icons.Default.Person, contentDescription = "User", tint = Color(0xFFFFC107))
                 }
 
-                Column(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(start = 16.dp)
-                ) {
-                    Text(
-                        text = userName,
-                        fontWeight = FontWeight.Medium,
-                        fontSize = 16.sp
-                    )
-                    Text(
-                        text = userEmail,
-                        color = Color.Gray,
-                        fontSize = 14.sp
-                    )
+                Column(modifier = Modifier.weight(1f).padding(start = 16.dp)) {
+                    Text(text = userName, fontWeight = FontWeight.Medium, fontSize = 16.sp)
+                    Text(text = userEmail, color = Color.Gray, fontSize = 14.sp)
                 }
 
                 IconButton(onClick = { showEditUserDialog = true }) {
-                    Icon(
-                        imageVector = Icons.Default.Edit,
-                        contentDescription = "Edit User",
-                        tint = Color.Gray
-                    )
+                    Icon(Icons.Default.Edit, contentDescription = "Edit User", tint = Color.Gray)
                 }
             }
 
             Divider()
 
-            // App Settings Section
-            SectionHeader(title = "App Settings")
+            // App Settings
+            SectionHeader("App Settings")
 
-            // App Color Setting
-            SettingItem(
-                title = "App Color:",
-                content = {
-                    Box(
-                        modifier = Modifier
-                            .size(24.dp)
-                            .background(selectedColor)
-                            .padding(4.dp)
-                    )
-                },
-                onClick = { showColorPicker = true }
-            )
-
-            // Auto Arm Security Alarm Setting
-            SettingItem(
-                title = "Auto Arm Security Alarm",
-                content = {
-                    Switch(
-                        checked = autoArmSecurityEnabled,
-                        onCheckedChange = { autoArmSecurityEnabled = it },
-                        thumbContent = if (autoArmSecurityEnabled) {
-                            {
-                                Icon(
-                                    imageVector = Icons.Filled.Check,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(SwitchDefaults.IconSize)
-                                )
-                            }
-                        } else {
-                            null
-                        },
-                        colors = SwitchDefaults.colors(
-                            checkedThumbColor = Color.White,
-                            checkedTrackColor = Color(0xFFFFC107),
-                            checkedIconColor = Color(0xFFFFC107)
-                        )
-                    )
-                }
-            )
-
-            // App Notifications Setting
-            SettingItem(
-                title = "App Notifications",
-                content = {
-                    Switch(
-                        checked = appNotificationsEnabled,
-                        onCheckedChange = { appNotificationsEnabled = it },
-                        colors = SwitchDefaults.colors(
-                            checkedThumbColor = Color.White,
-                            checkedTrackColor = Color(0xFFFFC107),
-                            checkedIconColor = Color(0xFFFFC107)
-                        )
-                    )
-                }
-            )
-
-            Divider()
-
-            // Voice Section (for visual purposes)
-            SectionHeader(title = "Voice")
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    imageVector = Icons.Default.PlayArrow,
-                    contentDescription = "Voice",
-                    tint = Color(0xFFFFC107)
-                )
-
-                Text(
-                    text = "Voice Assistants",
+            SettingItem("App Color:", {
+                Box(
                     modifier = Modifier
-                        .weight(1f)
-                        .padding(start = 16.dp),
-                    fontWeight = FontWeight.Medium
+                        .size(24.dp)
+                        .background(selectedColor)
+                        .padding(4.dp)
                 )
+            }, onClick = { showColorPicker = true })
 
-                Icon(
-                    imageVector = Icons.Default.KeyboardArrowRight,
-                    contentDescription = "Navigate",
-                    tint = Color.Gray
+            SettingItem("Auto Arm Security Alarm", {
+                Switch(
+                    checked = autoArmSecurityEnabled,
+                    onCheckedChange = { viewModel.saveAutoArm(it) },
+                    thumbContent = if (autoArmSecurityEnabled) {
+                        { Icon(Icons.Default.Check, contentDescription = null, modifier = Modifier.size(SwitchDefaults.IconSize)) }
+                    } else null,
+                    colors = SwitchDefaults.colors(
+                        checkedThumbColor = Color.White,
+                        checkedTrackColor = Color(0xFFFFC107),
+                        checkedIconColor = Color(0xFFFFC107)
+                    )
                 )
-            }
+            })
+
+            SettingItem("App Notifications", {
+                Switch(
+                    checked = appNotificationsEnabled,
+                    onCheckedChange = { viewModel.saveNotifications(it) },
+                    colors = SwitchDefaults.colors(
+                        checkedThumbColor = Color.White,
+                        checkedTrackColor = Color(0xFFFFC107),
+                        checkedIconColor = Color(0xFFFFC107)
+                    )
+                )
+            })
 
             Divider()
 
-            // App Permissions Section (for visual purposes)
-            SectionHeader(title = "App Permissions")
+            SectionHeader("Voice")
+            SettingItem("Voice Assistants", {
+                Icon(Icons.Default.KeyboardArrowRight, contentDescription = "Arrow", tint = Color.Gray)
+            })
 
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Settings,
-                    contentDescription = "Permissions",
-                    tint = Color.Gray
-                )
+            Divider()
 
-                Text(
-                    text = "Notifications & Permissions",
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(start = 16.dp),
-                    fontWeight = FontWeight.Medium
-                )
-
-                Icon(
-                    imageVector = Icons.Default.KeyboardArrowRight,
-                    contentDescription = "Navigate",
-                    tint = Color.Gray
-                )
-            }
+            SectionHeader("App Permissions")
+            SettingItem("Notifications & Permissions", {
+                Icon(Icons.Default.KeyboardArrowRight, contentDescription = "Arrow", tint = Color.Gray)
+            })
         }
     }
 
-    // Edit User Dialog
+    // Edit user dialog
     if (showEditUserDialog) {
         var tempName by remember { mutableStateOf(userName) }
         var tempEmail by remember { mutableStateOf(userEmail) }
@@ -264,9 +174,7 @@ fun SettingsPage(modifier: Modifier = Modifier) {
                         label = { Text("Name") },
                         modifier = Modifier.fillMaxWidth()
                     )
-
                     Spacer(modifier = Modifier.height(8.dp))
-
                     OutlinedTextField(
                         value = tempEmail,
                         onValueChange = { tempEmail = it },
@@ -276,13 +184,11 @@ fun SettingsPage(modifier: Modifier = Modifier) {
                 }
             },
             confirmButton = {
-                TextButton(
-                    onClick = {
-                        userName = tempName
-                        userEmail = tempEmail
-                        showEditUserDialog = false
-                    }
-                ) {
+                TextButton(onClick = {
+                    viewModel.saveUserName(tempName)
+                    viewModel.saveUserEmail(tempEmail)
+                    showEditUserDialog = false
+                }) {
                     Text("Save")
                 }
             },
@@ -294,7 +200,7 @@ fun SettingsPage(modifier: Modifier = Modifier) {
         )
     }
 
-    // Color Picker Dialog
+    // Color picker dialog
     if (showColorPicker) {
         AlertDialog(
             onDismissRequest = { showColorPicker = false },
@@ -309,13 +215,13 @@ fun SettingsPage(modifier: Modifier = Modifier) {
                             ColorOption(
                                 color = color,
                                 isSelected = color == selectedColor,
-                                onClick = { selectedColor = color }
+                                onClick = {
+                                    viewModel.saveAppColor(color)
+                                }
                             )
                         }
                     }
-
                     Spacer(modifier = Modifier.height(16.dp))
-
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceEvenly
@@ -324,7 +230,9 @@ fun SettingsPage(modifier: Modifier = Modifier) {
                             ColorOption(
                                 color = color,
                                 isSelected = color == selectedColor,
-                                onClick = { selectedColor = color }
+                                onClick = {
+                                    viewModel.saveAppColor(color)
+                                }
                             )
                         }
                     }

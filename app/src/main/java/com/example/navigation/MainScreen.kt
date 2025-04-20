@@ -25,8 +25,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.navigation.data.RoutineViewModel
+import com.example.navigation.data.SettingsViewModel
 import com.example.navigation.pages.FavoritesPage
 import com.example.navigation.pages.IdeasPage
 import com.example.navigation.pages.RoutinesPage
@@ -35,6 +37,7 @@ import com.example.navigation.pages.ThingsPage
 
 @Composable
 fun MainScreen( modifier: Modifier = Modifier) {
+    val settingsViewModel: SettingsViewModel = hiltViewModel()
     val navItemList = listOf(
         NavItem("Favorites", Icons.Default.Favorite, 0),
         NavItem("Things",   Icons.Outlined.List,  1),
@@ -87,13 +90,19 @@ fun MainScreen( modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun ContentScreen(modifier: Modifier = Modifier, selectedIndex : Int,    routineViewModel: RoutineViewModel = viewModel()
+fun ContentScreen(
+    modifier: Modifier = Modifier,
+    selectedIndex: Int,
+    routineViewModel: RoutineViewModel = viewModel()
 ) {
-    when(selectedIndex){
-        0-> FavoritesPage()
-        1-> ThingsPage()
-        2-> RoutinesPage(modifier = Modifier,routineViewModel)
-        3-> IdeasPage()
-        4-> SettingsPage()
+    when (selectedIndex) {
+        0 -> FavoritesPage()
+        1 -> ThingsPage()
+        2 -> RoutinesPage(modifier = modifier, routineViewModel)
+        3 -> IdeasPage()
+        4 -> {
+            val settingsViewModel: SettingsViewModel = hiltViewModel()
+            SettingsPage(viewModel = settingsViewModel, modifier = modifier)
+        }
     }
 }

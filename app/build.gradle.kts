@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     id("kotlin-kapt") // ✅ Required for Room compiler
+    id("dagger.hilt.android.plugin")
 }
 
 android {
@@ -44,9 +45,11 @@ dependencies {
     val roomVersion = "2.6.1"
 //    implementation("com.composables:icons-lucide:1.0.0")
 //    implementation(libs.ionicons)
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.8.7")
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
@@ -59,7 +62,11 @@ dependencies {
     implementation("androidx.room:room-runtime:$roomVersion")
     implementation("androidx.room:room-ktx:$roomVersion")
     kapt("androidx.room:room-compiler:$roomVersion")
+    implementation("com.google.dagger:hilt-android:2.48")
+    kapt("com.google.dagger:hilt-compiler:2.48")
 
+    // Hilt support for ViewModels
+    implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
