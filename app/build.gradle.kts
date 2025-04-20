@@ -42,7 +42,8 @@ android {
 
 dependencies {
     val roomVersion = "2.6.1"
-
+//    implementation("com.composables:icons-lucide:1.0.0")
+//    implementation(libs.ionicons)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")

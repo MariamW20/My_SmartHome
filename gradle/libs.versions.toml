@@ -1,5 +1,7 @@
 [versions]
-agp = "8.8.0"
+agp = "8.7.3"
+iconsLucide = "1.0.0"
+ionicons = "1.0.0"
 kotlin = "2.0.0"
 coreKtx = "1.15.0"
 junit = "4.13.2"
@@ -8,10 +10,13 @@ espressoCore = "3.6.1"
 lifecycleRuntimeKtx = "2.8.7"
 activityCompose = "1.10.0"
 composeBom = "2024.04.01"
+lucideAndroid = "1.0.0"
 storage = "1.5.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+icons-lucide = { module = "com.composables:icons-lucide", version.ref = "iconsLucide" }
+ionicons = { module = "compose.icons:ionicons", version.ref = "ionicons" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -26,6 +31,7 @@ androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-man
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-storage = { group = "androidx.test.services", name = "storage", version.ref = "storage" }
+lucide-android = { module = "io.github.lucide-icons:lucide-android", version.ref = "lucideAndroid" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
