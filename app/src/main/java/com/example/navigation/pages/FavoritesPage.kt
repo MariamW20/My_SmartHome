@@ -7,6 +7,7 @@ package com.example.navigation.pages
 //import androidx.compose.foundation.layout.FlowRowScopeInstance.align
 //import androidx.compose.foundation.layout.FlowColumnScopeInstance.align
 //import androidx.compose.foundation.layout.ColumnScopeInstance.align
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -15,12 +16,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -28,20 +26,32 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 //@OptIn(ExperimentalMaterial3Api::class)
+import androidx.navigation.NavHostController
+import androidx.compose.runtime.Composable
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.background
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.*
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FavoritesPage(modifier: Modifier = Modifier) {
+fun FavoritesPage(navController: NavHostController, modifier: Modifier = Modifier) {
     Scaffold(
+        containerColor = Color.White, // ✅ Set Scaffold background
         topBar = {
             TopAppBar(
                 title = {
@@ -54,7 +64,7 @@ fun FavoritesPage(modifier: Modifier = Modifier) {
                 },
                 colors = TopAppBarDefaults.mediumTopAppBarColors(containerColor = Color(0xFFFFC107)),
                 actions = {
-                    IconButton(onClick = { }) {
+                    IconButton(onClick = { /* TODO: Add edit action or navigation */ }) {
                         Icon(
                             imageVector = Icons.Default.Edit,
                             contentDescription = "Edit",
@@ -69,7 +79,7 @@ fun FavoritesPage(modifier: Modifier = Modifier) {
                 modifier = Modifier.fillMaxSize()
             ) {
                 FloatingActionButton(
-                    onClick = { },
+                    onClick = { /* TODO: Navigate to add favorite screen if exists */ },
                     containerColor = Color.Blue,
                     shape = RoundedCornerShape(50.dp),
                     modifier = Modifier
@@ -80,13 +90,13 @@ fun FavoritesPage(modifier: Modifier = Modifier) {
                 }
             }
         }
-
-
     ) { paddingValues ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues), // Apply padding from Scaffold
+                .padding(paddingValues)
+                .padding(horizontal = 16.dp)
+                .background(Color.White), // ✅ Make content area white
             contentAlignment = Alignment.Center
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -94,7 +104,7 @@ fun FavoritesPage(modifier: Modifier = Modifier) {
                     imageVector = Icons.Default.Star,
                     contentDescription = "Star",
                     tint = Color.Gray,
-                    modifier = Modifier.size(60.dp)
+                    modifier = Modifier.size(80.dp)
                 )
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(text = "No Favorites!", fontSize = 30.sp, color = Color.DarkGray)

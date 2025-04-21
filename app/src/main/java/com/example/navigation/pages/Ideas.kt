@@ -11,9 +11,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 
 @Composable
-fun IdeasPage(modifier: Modifier = Modifier) {
+fun IdeasPage(navController: NavHostController, modifier: Modifier = Modifier) {
     Column(
         modifier = modifier.fillMaxSize()
             .background(Color(0xFFFDFCFC)),

@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.List
@@ -20,20 +19,28 @@ import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+
+
+import androidx.navigation.NavHostController
+import androidx.compose.runtime.Composable
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.background
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
 
 @Composable
 fun <ImageVector> ActionButton(s: String, info: ImageVector) {
@@ -42,17 +49,17 @@ fun <ImageVector> ActionButton(s: String, info: ImageVector) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ThingsPage(modifier: Modifier = Modifier) {
+fun ThingsPage(navController: NavHostController, modifier: Modifier = Modifier) {
     Column(modifier = Modifier.fillMaxSize()) {
         // Top Yellow Bar
         TopAppBar(
             title = { Text("My Smart Home", color = Color.White, style = TextStyle(textAlign = TextAlign.Center, fontSize = 24.sp ),modifier = Modifier.fillMaxWidth()) },
             colors = TopAppBarDefaults.mediumTopAppBarColors(containerColor = Color(0xFFFFC107)),
             actions = {
-                IconButton(onClick = { }) {
+                IconButton(onClick = { /* TODO: Add search action or navigation */ }) {
                     Icon(imageVector = Icons.Default.Search, contentDescription = "Search", tint = Color.White)
                 }
-                IconButton(onClick = { }) {
+                IconButton(onClick = { /* TODO: Add menu action or navigation */ }) {
                     Icon(imageVector = Icons.Default.MoreVert, contentDescription = "Menu", tint = Color.White)
                 }
             }

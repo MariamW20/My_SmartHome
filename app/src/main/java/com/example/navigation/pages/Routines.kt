@@ -5,28 +5,40 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.navigation.data.RoutineEntity
-import com.example.navigation.data.RoutineViewModel
 import java.text.SimpleDateFormat
 import java.util.*
 
+import androidx.navigation.NavHostController
+import androidx.compose.runtime.Composable
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.background
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.navigation.data.RoutineEntity
+import com.example.navigation.data.RoutineViewModel
+import androidx.compose.ui.graphics.vector.ImageVector
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RoutinesPage(modifier: Modifier = Modifier, routineViewModel: RoutineViewModel = viewModel()) {
+fun RoutinesPage(
+    navController: NavHostController,
+    routineViewModel: RoutineViewModel = viewModel()
+) {
     val routines by routineViewModel.routines.collectAsState()
     val hasRoutines = routines.isNotEmpty()
 
@@ -36,8 +48,9 @@ fun RoutinesPage(modifier: Modifier = Modifier, routineViewModel: RoutineViewMod
     var routineToDelete by remember { mutableStateOf<RoutineEntity?>(null) }
     var showAddDialog by remember { mutableStateOf(false) }
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(modifier = Modifier.fillMaxSize().background(Color.White)) {
         Scaffold(
+            containerColor = Color.White,
             topBar = {
                 TopAppBar(
                     title = {
@@ -49,22 +62,26 @@ fun RoutinesPage(modifier: Modifier = Modifier, routineViewModel: RoutineViewMod
                         )
                     },
                     actions = {
-                        IconButton(onClick = { }) {
+                        IconButton(onClick = {}) {
                             Icon(Icons.Default.Menu, contentDescription = "Menu", tint = Color.White)
                         }
                     },
                     colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color(0xFFFFC107))
                 )
             },
-            bottomBar = { RoutinesBottomNav() }
+            //bottomBar = { RoutinesBottomNav(navController) }
         ) { paddingValues ->
-            Box(modifier = modifier.fillMaxSize().padding(paddingValues)) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+            ) {
                 if (!hasRoutines) {
                     EmptyRoutinesState(Modifier.align(Alignment.Center))
                 } else {
                     LazyColumn(
                         modifier = Modifier.fillMaxSize(),
-                        contentPadding = PaddingValues(bottom = 80.dp) // Add padding at bottom for FAB visibility
+                        contentPadding = PaddingValues(bottom = 80.dp)
                     ) {
                         items(routines) { routine ->
                             RoutineItem(
@@ -85,7 +102,6 @@ fun RoutinesPage(modifier: Modifier = Modifier, routineViewModel: RoutineViewMod
             }
         }
 
-        // Add routine FAB positioned at the bottom center, above the navigation bar
         FloatingActionButton(
             onClick = { showAddDialog = true },
             containerColor = Color(0xFF03A9F4),
@@ -95,11 +111,7 @@ fun RoutinesPage(modifier: Modifier = Modifier, routineViewModel: RoutineViewMod
                 .padding(bottom = 80.dp)
                 .size(56.dp)
         ) {
-            Icon(
-                Icons.Default.Add,
-                contentDescription = "Add Routine",
-                modifier = Modifier.size(24.dp)
-            )
+            Icon(Icons.Default.Add, contentDescription = "Add Routine", modifier = Modifier.size(24.dp))
         }
     }
 
@@ -108,8 +120,8 @@ fun RoutinesPage(modifier: Modifier = Modifier, routineViewModel: RoutineViewMod
             isAdd = false,
             routine = editingRoutine!!,
             onDismiss = { showEditDialog = false },
-            onSave = { updatedRoutine ->
-                routineViewModel.updateRoutine(updatedRoutine)
+            onSave = {
+                routineViewModel.updateRoutine(it)
                 showEditDialog = false
             }
         )
@@ -121,12 +133,10 @@ fun RoutinesPage(modifier: Modifier = Modifier, routineViewModel: RoutineViewMod
             title = { Text("Delete Routine") },
             text = { Text("Are you sure you want to delete \"${routineToDelete!!.name}\"?") },
             confirmButton = {
-                TextButton(
-                    onClick = {
-                        routineViewModel.deleteRoutine(routineToDelete!!)
-                        showDeleteDialog = false
-                    }
-                ) {
+                TextButton(onClick = {
+                    routineViewModel.deleteRoutine(routineToDelete!!)
+                    showDeleteDialog = false
+                }) {
                     Text("Delete")
                 }
             },
@@ -148,8 +158,8 @@ fun RoutinesPage(modifier: Modifier = Modifier, routineViewModel: RoutineViewMod
                 recurrence = ""
             ),
             onDismiss = { showAddDialog = false },
-            onSave = { newRoutine ->
-                routineViewModel.insertRoutine(newRoutine)
+            onSave = {
+                routineViewModel.insertRoutine(it)
                 showAddDialog = false
             }
         )
@@ -168,24 +178,18 @@ fun RoutineDialog(
     var time by remember { mutableStateOf(routine.time) }
     var recurrence by remember { mutableStateOf(routine.recurrence) }
 
-    // Safely parse time or use defaults to avoid crashes
+    // Parse the time into hour and minute (12-hour format) without using Calendar
     val initialTimeData = try {
         if (time.isNotEmpty()) {
             val parsedTime = SimpleDateFormat("h:mm a", Locale.getDefault()).parse(time)
-            val calendar = Calendar.getInstance().apply {
-                if (parsedTime != null) {
-                    this.time = parsedTime
-                }
-            }
-            Pair(calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE))
+            Pair(parsedTime.hours, parsedTime.minutes) // Use hours and minutes directly
         } else {
-            Pair(12, 0)
+            Pair(12, 0) // Default time
         }
     } catch (e: Exception) {
-        Pair(12, 0)
+        Pair(12, 0) // Default time if parsing fails
     }
 
-    // Initialize time picker with safe values
     val timePickerState = rememberTimePickerState(
         initialHour = initialTimeData.first,
         initialMinute = initialTimeData.second,
@@ -211,7 +215,6 @@ fun RoutineDialog(
 
                 Spacer(Modifier.height(16.dp))
 
-                // Time Picker Field
                 OutlinedTextField(
                     value = time,
                     onValueChange = {},
@@ -232,7 +235,6 @@ fun RoutineDialog(
 
                 Spacer(Modifier.height(16.dp))
 
-                // Recurrence Dropdown
                 Box(modifier = Modifier.fillMaxWidth()) {
                     OutlinedTextField(
                         value = recurrence,
@@ -247,21 +249,20 @@ fun RoutineDialog(
                             Icon(
                                 Icons.Default.ArrowDropDown,
                                 contentDescription = "Select Recurrence",
-                                modifier = Modifier.clickable { expanded = !expanded }
+                                modifier = Modifier.clickable { expanded = true }
                             )
                         }
                     )
 
                     DropdownMenu(
                         expanded = expanded,
-                        onDismissRequest = { expanded = false },
-                        modifier = Modifier.width(IntrinsicSize.Max)
+                        onDismissRequest = { expanded = false }
                     ) {
-                        recurrenceOptions.forEach { option ->
+                        recurrenceOptions.forEach {
                             DropdownMenuItem(
-                                text = { Text(option) },
+                                text = { Text(it) },
                                 onClick = {
-                                    recurrence = option
+                                    recurrence = it
                                     expanded = false
                                 }
                             )
@@ -274,13 +275,7 @@ fun RoutineDialog(
             TextButton(
                 onClick = {
                     if (name.isNotBlank() && time.isNotBlank() && recurrence.isNotBlank()) {
-                        onSave(
-                            routine.copy(
-                                name = name,
-                                time = time,
-                                recurrence = recurrence
-                            )
-                        )
+                        onSave(routine.copy(name = name, time = time, recurrence = recurrence))
                     }
                 },
                 enabled = name.isNotBlank() && time.isNotBlank() && recurrence.isNotBlank()
@@ -295,76 +290,44 @@ fun RoutineDialog(
         }
     )
 
-    // Time Picker Dialog
+    // Time Picker Dialog logic
     if (showTimePickerDialog) {
-        TimePickerDialog(
-            onDismiss = { showTimePickerDialog = false },
-            onConfirm = {
-                try {
-                    val calendar = Calendar.getInstance().apply {
-                        set(Calendar.HOUR_OF_DAY, timePickerState.hour)
-                        set(Calendar.MINUTE, timePickerState.minute)
-                    }
-                    time = SimpleDateFormat("h:mm a", Locale.getDefault())
-                        .format(calendar.time)
-                } catch (e: Exception) {
-                    // Fallback in case of formatting error
-                    time = "${timePickerState.hour}:${String.format("%02d", timePickerState.minute)} ${if(timePickerState.hour < 12) "AM" else "PM"}"
+        AlertDialog(
+            onDismissRequest = { showTimePickerDialog = false },
+            confirmButton = {
+                TextButton(onClick = {
+                    // Format only the time in 12-hour format with AM/PM
+                    val hour = timePickerState.hour
+                    val minute = timePickerState.minute
+                    val displayHour = if (hour % 12 == 0) 12 else hour % 12
+                    val amPm = if (hour < 12) "AM" else "PM"
+                    time = "$displayHour:${String.format("%02d", minute)} $amPm"
+                    showTimePickerDialog = false
+                }) {
+                    Text("OK")
                 }
-                showTimePickerDialog = false
             },
-            timePickerState = timePickerState
+            dismissButton = {
+                TextButton(onClick = { showTimePickerDialog = false }) {
+                    Text("Cancel")
+                }
+            },
+            title = { Text("Select Time") },
+            text = {
+                TimePicker(state = timePickerState)
+            }
         )
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun TimePickerDialog(
-    onDismiss: () -> Unit,
-    onConfirm: () -> Unit,
-    timePickerState: TimePickerState
-) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text("Select Time") },
-        text = {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight(),
-                contentAlignment = Alignment.Center
-            ) {
-                TimePicker(state = timePickerState)
-            }
-        },
-        confirmButton = {
-            TextButton(onClick = onConfirm) {
-                Text("OK")
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text("Cancel")
-            }
-        }
-    )
-}
 
 @Composable
-fun RoutineItem(
-    routine: RoutineEntity,
-    onEdit: () -> Unit,
-    onDelete: () -> Unit
-) {
+fun RoutineItem(routine: RoutineEntity, onEdit: () -> Unit, onDelete: () -> Unit) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
+        modifier = Modifier.fillMaxWidth().padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column(modifier = Modifier.weight(1f)) {
-            //Text(text = routine.name, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
             Text("Task Name: ${routine.name}")
             Text("Timing: ${routine.time}")
             Text("Recurrence: ${routine.recurrence}")
@@ -387,60 +350,24 @@ fun EmptyRoutinesState(modifier: Modifier = Modifier) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Icon(
-            imageVector = Icons.Default.Refresh,
-            contentDescription = "No Routines",
-            modifier = Modifier.size(64.dp),
-            tint = Color.Gray
-        )
+        Icon(Icons.Default.Refresh, contentDescription = "No Routines", modifier = Modifier.size(64.dp), tint = Color.Gray)
         Spacer(modifier = Modifier.height(16.dp))
         Text("No Routines!", fontSize = 20.sp, fontWeight = FontWeight.Medium)
         Text("Click the '+' button below to get started")
-
-        // Add a downward arrow pointing to the FAB
         Spacer(modifier = Modifier.height(16.dp))
-        Icon(
-            imageVector = Icons.Default.KeyboardArrowDown,
-            contentDescription = "Down Arrow",
-            modifier = Modifier.size(32.dp),
-            tint = Color(0xFF03A9F4)
-        )
+        Icon(Icons.Default.KeyboardArrowDown, contentDescription = "Down Arrow", modifier = Modifier.size(32.dp), tint = Color(0xFF03A9F4))
     }
 }
 
 @Composable
-fun RoutinesBottomNav() {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(Color.White)
-            .padding(8.dp),
-        horizontalArrangement = Arrangement.SpaceAround
-    ) {
-        RoutinesNavItem(Icons.Default.Favorite, "Favorites")
-        RoutinesNavItem(Icons.Default.Build, "Things")
-        RoutinesNavItem(Icons.Default.List, "Routines", isSelected = true)
-        RoutinesNavItem(Icons.Default.DateRange, "Ideas")
-        RoutinesNavItem(Icons.Default.Settings, "Settings")
-    }
-}
-
-@Composable
-fun RoutinesNavItem(icon: ImageVector, label: String, isSelected: Boolean = false) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.padding(4.dp)
-    ) {
-        Icon(
-            icon,
-            contentDescription = label,
-            tint = if (isSelected) Color(0xFF03A9F4) else Color.Gray,
-            modifier = Modifier.size(24.dp)
-        )
-        Text(
-            label,
-            fontSize = 10.sp,
-            color = if (isSelected) Color(0xFF03A9F4) else Color.Gray
-        )
+fun RoutinesNavItem(icon: ImageVector, label: String, navController: NavHostController, route: String, isSelected: Boolean = false) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(4.dp).clickable {
+        navController.navigate(route) {
+            launchSingleTop = true
+            restoreState = true
+        }
+    }) {
+        Icon(icon, contentDescription = label, tint = if (isSelected) Color(0xFF03A9F4) else Color.Gray, modifier = Modifier.size(24.dp))
+        Text(label, fontSize = 10.sp, color = if (isSelected) Color(0xFF03A9F4) else Color.Gray)
     }
 }

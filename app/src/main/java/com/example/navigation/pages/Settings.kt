@@ -14,22 +14,31 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.navigation.data.UserPreferencesManager
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsPage(modifier: Modifier = Modifier) {
-    // State variables for user settings
-    var userName by remember { mutableStateOf("John Doe") }
-    var userEmail by remember { mutableStateOf("john@someorg.com") }
-    var selectedColor by remember { mutableStateOf(Color(0xFFFFC107)) }
-    var autoArmSecurityEnabled by remember { mutableStateOf(true) }
-    var appNotificationsEnabled by remember { mutableStateOf(false) }
+fun SettingsPage(
+    navController: androidx.navigation.NavController,
+    modifier: Modifier = Modifier
+) {
+    val context = LocalContext.current
+    val preferencesManager = remember { UserPreferencesManager(context) }
+
+    // State variables for user settings, initialized from SharedPreferences
+    var userName by remember { mutableStateOf(preferencesManager.getUserName()) }
+    var userEmail by remember { mutableStateOf(preferencesManager.getUserEmail()) }
+    var selectedColor by remember { mutableStateOf(preferencesManager.getAppColor()) }
+    var autoArmSecurityEnabled by remember { mutableStateOf(preferencesManager.getAutoArmSecurity()) }
+    var appNotificationsEnabled by remember { mutableStateOf(preferencesManager.getAppNotifications()) }
 
     // State for edit dialog
     var showEditUserDialog by remember { mutableStateOf(false) }
@@ -41,8 +50,8 @@ fun SettingsPage(modifier: Modifier = Modifier) {
         Color.Red,
         Color(0xFF03A9F4), // Blue
         Color(0xFF4CAF50), // Green
-        Color(0xFFFF9800), // Orange
-        Color(0xFF9C27B0)  // Purple
+        Color(0xFF9C27B0), // Purple
+        Color(0xFFFF9800)  // Orange
     )
 
     Scaffold(
@@ -61,9 +70,9 @@ fun SettingsPage(modifier: Modifier = Modifier) {
                 )
             )
         },
-        bottomBar = {
-            BottomNav(selectedColor)
-        }
+        //bottomBar = {
+            //BottomNav(selectedColor, navController)
+       // }
     ) { paddingValues ->
         Column(
             modifier = modifier
@@ -90,7 +99,7 @@ fun SettingsPage(modifier: Modifier = Modifier) {
                     Icon(
                         imageVector = Icons.Default.Person,
                         contentDescription = "User",
-                        tint = Color(0xFFFFC107)
+                        tint = selectedColor
                     )
                 }
 
@@ -145,7 +154,10 @@ fun SettingsPage(modifier: Modifier = Modifier) {
                 content = {
                     Switch(
                         checked = autoArmSecurityEnabled,
-                        onCheckedChange = { autoArmSecurityEnabled = it },
+                        onCheckedChange = {
+                            autoArmSecurityEnabled = it
+                            preferencesManager.saveAutoArmSecurity(it)
+                        },
                         thumbContent = if (autoArmSecurityEnabled) {
                             {
                                 Icon(
@@ -159,8 +171,8 @@ fun SettingsPage(modifier: Modifier = Modifier) {
                         },
                         colors = SwitchDefaults.colors(
                             checkedThumbColor = Color.White,
-                            checkedTrackColor = Color(0xFFFFC107),
-                            checkedIconColor = Color(0xFFFFC107)
+                            checkedTrackColor = selectedColor,
+                            checkedIconColor = selectedColor
                         )
                     )
                 }
@@ -172,11 +184,14 @@ fun SettingsPage(modifier: Modifier = Modifier) {
                 content = {
                     Switch(
                         checked = appNotificationsEnabled,
-                        onCheckedChange = { appNotificationsEnabled = it },
+                        onCheckedChange = {
+                            appNotificationsEnabled = it
+                            preferencesManager.saveAppNotifications(it)
+                        },
                         colors = SwitchDefaults.colors(
                             checkedThumbColor = Color.White,
-                            checkedTrackColor = Color(0xFFFFC107),
-                            checkedIconColor = Color(0xFFFFC107)
+                            checkedTrackColor = selectedColor,
+                            checkedIconColor = selectedColor
                         )
                     )
                 }
@@ -196,7 +211,7 @@ fun SettingsPage(modifier: Modifier = Modifier) {
                 Icon(
                     imageVector = Icons.Default.PlayArrow,
                     contentDescription = "Voice",
-                    tint = Color(0xFFFFC107)
+                    tint = selectedColor
                 )
 
                 Text(
@@ -280,6 +295,11 @@ fun SettingsPage(modifier: Modifier = Modifier) {
                     onClick = {
                         userName = tempName
                         userEmail = tempEmail
+
+                        // Save to SharedPreferences
+                        preferencesManager.saveUserName(tempName)
+                        preferencesManager.saveUserEmail(tempEmail)
+
                         showEditUserDialog = false
                     }
                 ) {
@@ -294,7 +314,7 @@ fun SettingsPage(modifier: Modifier = Modifier) {
         )
     }
 
-    // Color Picker Dialog
+    // Color Picker Dialog - FIXED to update both state and preferences immediately
     if (showColorPicker) {
         AlertDialog(
             onDismissRequest = { showColorPicker = false },
@@ -309,7 +329,11 @@ fun SettingsPage(modifier: Modifier = Modifier) {
                             ColorOption(
                                 color = color,
                                 isSelected = color == selectedColor,
-                                onClick = { selectedColor = color }
+                                onClick = {
+                                    // Update both state and SharedPreferences
+                                    selectedColor = color // Assuming color is already a Color object
+                                    preferencesManager.saveAppColor(color.toArgb()) // Convert Color to Int for storage
+                                }
                             )
                         }
                     }
@@ -324,7 +348,11 @@ fun SettingsPage(modifier: Modifier = Modifier) {
                             ColorOption(
                                 color = color,
                                 isSelected = color == selectedColor,
-                                onClick = { selectedColor = color }
+                                onClick = {
+                                    // Update both state and SharedPreferences
+                                    selectedColor = color // Assuming color is already a Color object
+                                    preferencesManager.saveAppColor(color.toArgb()) // Convert Color to Int for storage
+                                }
                             )
                         }
                     }
@@ -339,6 +367,63 @@ fun SettingsPage(modifier: Modifier = Modifier) {
     }
 }
 
+@Composable
+fun BottomNav(selectedColor: Color, navController: androidx.navigation.NavController) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color.White)
+            .padding(8.dp),
+        horizontalArrangement = Arrangement.SpaceAround
+    ) {
+        BottomNavItem(Icons.Default.Favorite, "Favorites", navController, "favorites")
+        BottomNavItem(Icons.Default.List, "Things", navController, "things")
+        BottomNavItem(Icons.Default.DateRange, "Routines", navController, "routines")
+        BottomNavItem(Icons.Default.Build, "Ideas", navController, "ideas")
+        BottomNavItem(
+            icon = Icons.Default.Settings,
+            label = "Settings",
+            navController = navController,
+            route = "settings",
+            tint = selectedColor
+        )
+    }
+}
+
+@Composable
+fun BottomNavItem(
+    icon: ImageVector,
+    label: String,
+    navController: androidx.navigation.NavController,
+    route: String,
+    tint: Color = Color.Gray
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.clickable {
+            navController.navigate(route) {
+                popUpTo(navController.graph.startDestinationId) {
+                    saveState = true
+                }
+                launchSingleTop = true
+                restoreState = true
+            }
+        }
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = label,
+            tint = tint
+        )
+        Text(
+            text = label,
+            fontSize = 10.sp,
+            color = tint
+        )
+    }
+}
+
+// Keep these helper composables as they were
 @Composable
 fun SectionHeader(title: String) {
     Text(
@@ -402,26 +487,6 @@ fun ColorOption(
     }
 }
 
-@Composable
-fun BottomNav(selectedColor: Color) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(Color.White)
-            .padding(8.dp),
-        horizontalArrangement = Arrangement.SpaceAround
-    ) {
-        BottomNavItem(Icons.Default.Favorite, "Favorites")
-        BottomNavItem(Icons.Default.List, "Things")
-        BottomNavItem(Icons.Default.DateRange, "Routines")
-        BottomNavItem(Icons.Default.Build, "Ideas")
-        BottomNavItem(
-            icon = Icons.Default.Settings,
-            label = "Settings",
-            tint = selectedColor
-        )
-    }
-}
 
 @Composable
 fun BottomNavItem(
