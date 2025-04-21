@@ -21,11 +21,9 @@ import com.example.navigation.ui.theme.LocalAppColor
 @Composable
 fun MainScreen(modifier: Modifier = Modifier,onColorChange: (Color) -> Unit
 ) {
-    // Initialize the NavController
     val navController = rememberNavController()
     val appColor = LocalAppColor.current
 
-    // Define your navigation items (bottom navigation menu)
     val navItems = listOf(
         NavItem("Favorite", Icons.Default.Favorite, "favorites"),
         NavItem("Things", Icons.Default.List, "things"),
@@ -34,7 +32,7 @@ fun MainScreen(modifier: Modifier = Modifier,onColorChange: (Color) -> Unit
         NavItem("Settings", Icons.Default.Settings, "settings")
     )
 
-    // Scaffold to manage the app structure with a bottom navigation bar
+    // Bottom navigation bar
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         bottomBar = {
@@ -74,7 +72,6 @@ fun MainScreen(modifier: Modifier = Modifier,onColorChange: (Color) -> Unit
             }
         }
     ) { innerPadding ->
-        // NavHost defines the navigation graph with routes
         NavHost(
             navController = navController,
             startDestination = "favorites",

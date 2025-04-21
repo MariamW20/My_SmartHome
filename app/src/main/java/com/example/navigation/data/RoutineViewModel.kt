@@ -13,7 +13,7 @@ class RoutineViewModel(application: Application) : AndroidViewModel(application)
 
     private val routineDao = RoutineDatabase.getDatabase(application).routineDao()
 
-    // StateFlow to expose routines as a reactive stream
+    //expose routines as a reactive stream
     val routines: StateFlow<List<RoutineEntity>> = routineDao
         .getAllRoutines()
         .map { it.sortedBy { routine -> routine.id } }

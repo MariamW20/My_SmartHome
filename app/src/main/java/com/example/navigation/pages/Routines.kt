@@ -71,7 +71,6 @@ fun RoutinesPage(
                     colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = appColor)
                 )
             },
-            //bottomBar = { RoutinesBottomNav(navController) }
         ) { paddingValues ->
             Box(
                 modifier = Modifier
@@ -180,16 +179,16 @@ fun RoutineDialog(
     var time by remember { mutableStateOf(routine.time) }
     var recurrence by remember { mutableStateOf(routine.recurrence) }
 
-    // Parse the time into hour and minute (12-hour format) without using Calendar
+    // Parse the time into hour and minute (12-hour format)
     val initialTimeData = try {
         if (time.isNotEmpty()) {
             val parsedTime = SimpleDateFormat("h:mm a", Locale.getDefault()).parse(time)
-            Pair(parsedTime.hours, parsedTime.minutes) // Use hours and minutes directly
+            Pair(parsedTime.hours, parsedTime.minutes)
         } else {
-            Pair(12, 0) // Default time
+            Pair(12, 0)
         }
     } catch (e: Exception) {
-        Pair(12, 0) // Default time if parsing fails
+        Pair(12, 0)
     }
 
     val timePickerState = rememberTimePickerState(
@@ -292,13 +291,12 @@ fun RoutineDialog(
         }
     )
 
-    // Time Picker Dialog logic
+    // Time Picker Dialog
     if (showTimePickerDialog) {
         AlertDialog(
             onDismissRequest = { showTimePickerDialog = false },
             confirmButton = {
                 TextButton(onClick = {
-                    // Format only the time in 12-hour format with AM/PM
                     val hour = timePickerState.hour
                     val minute = timePickerState.minute
                     val displayHour = if (hour % 12 == 0) 12 else hour % 12

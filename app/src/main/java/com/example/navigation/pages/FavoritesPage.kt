@@ -53,7 +53,7 @@ import com.example.navigation.ui.theme.LocalAppColor
 fun FavoritesPage(navController: NavHostController, modifier: Modifier = Modifier) {
     val appColor = LocalAppColor.current
     Scaffold(
-        containerColor = Color.White, // ✅ Set Scaffold background
+        containerColor = Color.White,
         topBar = {
             TopAppBar(
                 title = {
@@ -66,7 +66,7 @@ fun FavoritesPage(navController: NavHostController, modifier: Modifier = Modifie
                 },
                 colors = TopAppBarDefaults.mediumTopAppBarColors(containerColor = appColor),
                 actions = {
-                    IconButton(onClick = { /* TODO: Add edit action or navigation */ }) {
+                    IconButton(onClick = { }) {
                         Icon(
                             imageVector = Icons.Default.Edit,
                             contentDescription = "Edit",
@@ -81,7 +81,7 @@ fun FavoritesPage(navController: NavHostController, modifier: Modifier = Modifie
                 modifier = Modifier.fillMaxSize()
             ) {
                 FloatingActionButton(
-                    onClick = { /* TODO: Navigate to add favorite screen if exists */ },
+                    onClick = { },
                     containerColor = appColor,
                     shape = RoundedCornerShape(50.dp),
                     modifier = Modifier

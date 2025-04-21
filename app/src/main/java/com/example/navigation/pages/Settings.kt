@@ -41,18 +41,16 @@ fun SettingsPage(
     var autoArmSecurityEnabled by remember { mutableStateOf(preferencesManager.getAutoArmSecurity()) }
     var appNotificationsEnabled by remember { mutableStateOf(preferencesManager.getAppNotifications()) }
 
-    // State for edit dialog
     var showEditUserDialog by remember { mutableStateOf(false) }
     var showColorPicker by remember { mutableStateOf(false) }
 
-    // Available app colors
     val appColors = listOf(
         Color.Yellow,
         Color.Red,
         Color(0xFF000080),
         Color(0xFFFFC107),
-        Color(0xFF4CAF50), // Green
-        Color(0xFF9C27B0), // Purple
+        Color(0xFF4CAF50),
+        Color(0xFF9C27B0),
 
     )
 
@@ -72,9 +70,6 @@ fun SettingsPage(
                 )
             )
         },
-        //bottomBar = {
-            //BottomNav(selectedColor, navController)
-       // }
     ) { paddingValues ->
         Column(
             modifier = modifier
@@ -182,7 +177,6 @@ fun SettingsPage(
                 }
             )
 
-            // App Notifications Setting
             SettingItem(
                 title = "App Notifications",
                 content = {
@@ -203,7 +197,7 @@ fun SettingsPage(
 
             Divider()
 
-            // Voice Section (for visual purposes)
+            // Voice Section
             SectionHeader(title = "Voice")
 
             Row(
@@ -235,7 +229,7 @@ fun SettingsPage(
 
             Divider()
 
-            // App Permissions Section (for visual purposes)
+            // App Permissions Section
             SectionHeader(title = "App Permissions")
 
             Row(
@@ -300,7 +294,6 @@ fun SettingsPage(
                         userName = tempName
                         userEmail = tempEmail
 
-                        // Save to SharedPreferences
                         preferencesManager.saveUserName(tempName)
                         preferencesManager.saveUserEmail(tempEmail)
 
@@ -318,7 +311,7 @@ fun SettingsPage(
         )
     }
 
-    // Color Picker Dialog - FIXED to update both state and preferences immediately
+    // Color Picker Dialog
     if (showColorPicker) {
         AlertDialog(
             onDismissRequest = { showColorPicker = false },
@@ -334,9 +327,7 @@ fun SettingsPage(
                                 color = color,
                                 isSelected = color == selectedColor,
                                 onClick = {
-
-                                    // Update both state and SharedPreferences
-                                    selectedColor = color // Assuming color is already a Color object
+                                    selectedColor = color
                                     preferencesManager.saveAppColor(color.toArgb())
                                     onColorChange(color)
                                 }
@@ -358,6 +349,7 @@ fun SettingsPage(
                                     // Update both state and SharedPreferences
                                     selectedColor = color // Assuming color is already a Color object
                                     preferencesManager.saveAppColor(color.toArgb()) // Convert Color to Int for storage
+                                    onColorChange(color)
                                 }
                             )
                         }
@@ -429,7 +421,6 @@ fun BottomNavItem(
     }
 }
 
-// Keep these helper composables as they were
 @Composable
 fun SectionHeader(title: String) {
     Text(

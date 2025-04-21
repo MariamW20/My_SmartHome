@@ -8,16 +8,14 @@ import androidx.core.content.edit
 
 class UserPreferencesManager(context: Context) {
     private val prefs: SharedPreferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
-    // Add inside the companion object if you have one, or just at the top level of the class
     companion object {
         const val PREFS_NAME = "user_prefs"
         private const val KEY_COLOR = "app_color"
 
-        // Provide some default colors
         val DEFAULT_COLORS = listOf(
-            Color(0xFFFFC107), // Amber
-            Color(0xFF4CAF50), // Green
-            Color(0xFF03A9F4)  // Blue
+            Color(0xFFFFC107),
+            Color(0xFF4CAF50),
+            Color(0xFF03A9F4)
         )
     }
     fun getUserName(): String = prefs.getString("user_name", "John Doe") ?: "John Doe"

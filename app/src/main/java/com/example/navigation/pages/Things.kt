@@ -53,7 +53,6 @@ fun <ImageVector> ActionButton(s: String, info: ImageVector) {
 fun ThingsPage(navController: NavHostController, modifier: Modifier = Modifier) {
     val appColor = LocalAppColor.current
     Column(modifier = Modifier.fillMaxSize()) {
-        // Top Yellow Bar
         TopAppBar(
             title = { Text("My Smart Home", color = Color.White, style = TextStyle(textAlign = TextAlign.Center, fontSize = 24.sp ),modifier = Modifier.fillMaxWidth()) },
             colors = TopAppBarDefaults.mediumTopAppBarColors(containerColor = appColor),
