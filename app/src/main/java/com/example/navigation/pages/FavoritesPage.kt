@@ -1,13 +1,6 @@
 package com.example.navigation.pages
 
-//import androidx.compose.foundation.layout.BoxScopeInstance.align
-//import androidx.compose.foundation.layout.Box
-//import androidx.compose.foundation.layout.BoxScopeInstance.align
-//import androidx.compose.foundation.layout.BoxScopeInstance.align
-//import androidx.compose.foundation.layout.FlowRowScopeInstance.align
-//import androidx.compose.foundation.layout.FlowColumnScopeInstance.align
-//import androidx.compose.foundation.layout.ColumnScopeInstance.align
-import androidx.compose.foundation.background
+
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -32,20 +25,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-//@OptIn(ExperimentalMaterial3Api::class)
 import androidx.navigation.NavHostController
 import androidx.compose.runtime.Composable
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Star
-import androidx.compose.material3.*
 import com.example.navigation.ui.theme.LocalAppColor
 
 @OptIn(ExperimentalMaterial3Api::class)
