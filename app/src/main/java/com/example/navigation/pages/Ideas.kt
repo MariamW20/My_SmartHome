@@ -12,9 +12,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.navigation.ui.theme.LocalAppColor
 
 @Composable
 fun IdeasPage(navController: NavHostController, modifier: Modifier = Modifier) {
+    val selectedColor = LocalAppColor.current
     Column(
         modifier = modifier.fillMaxSize()
             .background(Color(0xFFFDFCFC)),
@@ -25,7 +27,7 @@ fun IdeasPage(navController: NavHostController, modifier: Modifier = Modifier) {
             text = "Ideas Page",
             fontSize = 40.sp,
             fontWeight = FontWeight.SemiBold,
-            color = Color.Black
+            color = selectedColor
         )
     }
 }

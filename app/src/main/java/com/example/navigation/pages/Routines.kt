@@ -32,6 +32,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.navigation.data.RoutineEntity
 import com.example.navigation.data.RoutineViewModel
 import androidx.compose.ui.graphics.vector.ImageVector
+import com.example.navigation.ui.theme.LocalAppColor
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -41,6 +42,7 @@ fun RoutinesPage(
 ) {
     val routines by routineViewModel.routines.collectAsState()
     val hasRoutines = routines.isNotEmpty()
+    val appColor = LocalAppColor.current
 
     var showEditDialog by remember { mutableStateOf(false) }
     var editingRoutine by remember { mutableStateOf<RoutineEntity?>(null) }
@@ -66,7 +68,7 @@ fun RoutinesPage(
                             Icon(Icons.Default.Menu, contentDescription = "Menu", tint = Color.White)
                         }
                     },
-                    colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color(0xFFFFC107))
+                    colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = appColor)
                 )
             },
             //bottomBar = { RoutinesBottomNav(navController) }
@@ -104,7 +106,7 @@ fun RoutinesPage(
 
         FloatingActionButton(
             onClick = { showAddDialog = true },
-            containerColor = Color(0xFF03A9F4),
+            containerColor = appColor,
             contentColor = Color.White,
             modifier = Modifier
                 .align(Alignment.BottomEnd)
@@ -323,6 +325,7 @@ fun RoutineDialog(
 
 @Composable
 fun RoutineItem(routine: RoutineEntity, onEdit: () -> Unit, onDelete: () -> Unit) {
+    val appColor = LocalAppColor.current
     Row(
         modifier = Modifier.fillMaxWidth().padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -334,7 +337,7 @@ fun RoutineItem(routine: RoutineEntity, onEdit: () -> Unit, onDelete: () -> Unit
         }
         Row {
             IconButton(onClick = onEdit) {
-                Icon(Icons.Default.Edit, contentDescription = "Edit", tint = Color(0xFF03A9F4))
+                Icon(Icons.Default.Edit, contentDescription = "Edit", tint = appColor)
             }
             IconButton(onClick = onDelete) {
                 Icon(Icons.Default.Delete, contentDescription = "Delete", tint = Color(0xFFE91E63))
@@ -345,6 +348,7 @@ fun RoutineItem(routine: RoutineEntity, onEdit: () -> Unit, onDelete: () -> Unit
 
 @Composable
 fun EmptyRoutinesState(modifier: Modifier = Modifier) {
+    val appColor = LocalAppColor.current
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -352,7 +356,7 @@ fun EmptyRoutinesState(modifier: Modifier = Modifier) {
     ) {
         Icon(Icons.Default.Refresh, contentDescription = "No Routines", modifier = Modifier.size(64.dp), tint = Color.Gray)
         Spacer(modifier = Modifier.height(16.dp))
-        Text("No Routines!", fontSize = 20.sp, fontWeight = FontWeight.Medium)
+        Text("No Routines!", fontSize = 20.sp, fontWeight = FontWeight.Medium,color = appColor)
         Text("Click the '+' button below to get started")
         Spacer(modifier = Modifier.height(16.dp))
         Icon(Icons.Default.KeyboardArrowDown, contentDescription = "Down Arrow", modifier = Modifier.size(32.dp), tint = Color(0xFF03A9F4))

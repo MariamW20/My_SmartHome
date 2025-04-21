@@ -28,6 +28,7 @@ import com.example.navigation.data.UserPreferencesManager
 @Composable
 fun SettingsPage(
     navController: androidx.navigation.NavController,
+    onColorChange: (Color) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -36,7 +37,7 @@ fun SettingsPage(
     // State variables for user settings, initialized from SharedPreferences
     var userName by remember { mutableStateOf(preferencesManager.getUserName()) }
     var userEmail by remember { mutableStateOf(preferencesManager.getUserEmail()) }
-    var selectedColor by remember { mutableStateOf(preferencesManager.getAppColor()) }
+    var selectedColor by remember { mutableStateOf(Color(preferencesManager.getAppColor())) }
     var autoArmSecurityEnabled by remember { mutableStateOf(preferencesManager.getAutoArmSecurity()) }
     var appNotificationsEnabled by remember { mutableStateOf(preferencesManager.getAppNotifications()) }
 
@@ -146,7 +147,9 @@ fun SettingsPage(
                             .padding(4.dp)
                     )
                 },
-                onClick = { showColorPicker = true }
+                onClick = {
+                    showColorPicker = true
+                }
             )
 
             // Auto Arm Security Alarm Setting
@@ -331,9 +334,11 @@ fun SettingsPage(
                                 color = color,
                                 isSelected = color == selectedColor,
                                 onClick = {
+
                                     // Update both state and SharedPreferences
                                     selectedColor = color // Assuming color is already a Color object
-                                    preferencesManager.saveAppColor(color.toArgb()) // Convert Color to Int for storage
+                                    preferencesManager.saveAppColor(color.toArgb())
+                                    onColorChange(color)
                                 }
                             )
                         }

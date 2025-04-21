@@ -46,10 +46,12 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
+import com.example.navigation.ui.theme.LocalAppColor
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FavoritesPage(navController: NavHostController, modifier: Modifier = Modifier) {
+    val appColor = LocalAppColor.current
     Scaffold(
         containerColor = Color.White, // ✅ Set Scaffold background
         topBar = {
@@ -62,13 +64,13 @@ fun FavoritesPage(navController: NavHostController, modifier: Modifier = Modifie
                         modifier = Modifier.fillMaxWidth()
                     )
                 },
-                colors = TopAppBarDefaults.mediumTopAppBarColors(containerColor = Color(0xFFFFC107)),
+                colors = TopAppBarDefaults.mediumTopAppBarColors(containerColor = appColor),
                 actions = {
                     IconButton(onClick = { /* TODO: Add edit action or navigation */ }) {
                         Icon(
                             imageVector = Icons.Default.Edit,
                             contentDescription = "Edit",
-                            tint = Color.White
+                            tint = appColor,
                         )
                     }
                 }
@@ -80,7 +82,7 @@ fun FavoritesPage(navController: NavHostController, modifier: Modifier = Modifie
             ) {
                 FloatingActionButton(
                     onClick = { /* TODO: Navigate to add favorite screen if exists */ },
-                    containerColor = Color(0xFF03A9F4),
+                    containerColor = appColor,
                     shape = RoundedCornerShape(50.dp),
                     modifier = Modifier
                         .align(Alignment.BottomEnd)
@@ -107,7 +109,7 @@ fun FavoritesPage(navController: NavHostController, modifier: Modifier = Modifie
                     modifier = Modifier.size(100.dp)
                 )
                 Spacer(modifier = Modifier.height(10.dp))
-                Text(text = "No Favorites!", fontSize = 30.sp, color = Color.DarkGray)
+                Text(text = "No Favorites!", fontSize = 30.sp, color = appColor)
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = "Add your favorite routines for easy access here.",

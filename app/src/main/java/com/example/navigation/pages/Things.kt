@@ -41,6 +41,7 @@ import androidx.compose.foundation.background
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
+import com.example.navigation.ui.theme.LocalAppColor
 
 @Composable
 fun <ImageVector> ActionButton(s: String, info: ImageVector) {
@@ -50,11 +51,12 @@ fun <ImageVector> ActionButton(s: String, info: ImageVector) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ThingsPage(navController: NavHostController, modifier: Modifier = Modifier) {
+    val appColor = LocalAppColor.current
     Column(modifier = Modifier.fillMaxSize()) {
         // Top Yellow Bar
         TopAppBar(
             title = { Text("My Smart Home", color = Color.White, style = TextStyle(textAlign = TextAlign.Center, fontSize = 24.sp ),modifier = Modifier.fillMaxWidth()) },
-            colors = TopAppBarDefaults.mediumTopAppBarColors(containerColor = Color(0xFFFFC107)),
+            colors = TopAppBarDefaults.mediumTopAppBarColors(containerColor = appColor),
             actions = {
                 IconButton(onClick = { /* TODO: Add search action or navigation */ }) {
                     Icon(imageVector = Icons.Default.Search, contentDescription = "Search", tint = Color.White)
@@ -101,10 +103,11 @@ fun ThingsPage(navController: NavHostController, modifier: Modifier = Modifier) 
 
 @Composable
 fun ActionButton(text: String, icon: androidx.compose.ui.graphics.vector.ImageVector) {
+    val appColor = LocalAppColor.current
     Button(
         onClick = { /* No action needed */ },
         modifier = Modifier.fillMaxWidth(0.8f).padding(4.dp),
-        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2196F3))
+        colors = ButtonDefaults.buttonColors(containerColor = appColor)
     ) {
         Icon(imageVector = icon, contentDescription = text, tint = Color.White)
         Spacer(modifier = Modifier.width(8.dp))

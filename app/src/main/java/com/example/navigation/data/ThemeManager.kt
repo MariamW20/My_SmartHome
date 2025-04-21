@@ -16,6 +16,6 @@ object AppTheme {
     }
 
     fun initialize(preferencesManager: UserPreferencesManager) {
-        primaryColor = preferencesManager.getAppColor()
+        primaryColor = Color(preferencesManager.getAppColor())
     }
 }

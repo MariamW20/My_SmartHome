@@ -16,11 +16,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.*
 import com.example.navigation.pages.*
+import com.example.navigation.ui.theme.LocalAppColor
 
 @Composable
-fun MainScreen(modifier: Modifier = Modifier) {
+fun MainScreen(modifier: Modifier = Modifier,onColorChange: (Color) -> Unit
+) {
     // Initialize the NavController
     val navController = rememberNavController()
+    val appColor = LocalAppColor.current
 
     // Define your navigation items (bottom navigation menu)
     val navItems = listOf(
@@ -60,7 +63,7 @@ fun MainScreen(modifier: Modifier = Modifier) {
                         label = { Text(navItem.label) },
                         alwaysShowLabel = true,
                         colors = NavigationBarItemDefaults.colors(
-                            selectedIconColor = Color.Yellow,
+                            selectedIconColor = appColor,
                             unselectedIconColor = Color.Gray,
                             selectedTextColor = Color.Black,
                             unselectedTextColor = Color.Black,
@@ -82,7 +85,12 @@ fun MainScreen(modifier: Modifier = Modifier) {
             composable("things") { ThingsPage(navController) }
             composable("routines") { RoutinesPage(navController) }
             composable("ideas") { IdeasPage(navController) }
-            composable("settings") { SettingsPage(navController) }
+            composable("settings") {
+                SettingsPage(
+                    navController = navController,
+                    onColorChange = onColorChange
+                )
+            }
         }
     }
 }
