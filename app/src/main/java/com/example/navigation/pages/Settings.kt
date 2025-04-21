@@ -48,10 +48,11 @@ fun SettingsPage(
     val appColors = listOf(
         Color.Yellow,
         Color.Red,
-        Color(0xFF03A9F4), // Blue
+        Color(0xFF000080),
+        Color(0xFFFFC107),
         Color(0xFF4CAF50), // Green
         Color(0xFF9C27B0), // Purple
-        Color(0xFFFF9800)  // Orange
+
     )
 
     Scaffold(

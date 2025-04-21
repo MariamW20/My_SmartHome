@@ -24,7 +24,7 @@ fun MainScreen(modifier: Modifier = Modifier) {
 
     // Define your navigation items (bottom navigation menu)
     val navItems = listOf(
-        NavItem("Favorites", Icons.Default.Favorite, "favorites"),
+        NavItem("Favorite", Icons.Default.Favorite, "favorites"),
         NavItem("Things", Icons.Default.List, "things"),
         NavItem("Routines", Icons.Default.DateRange, "routines"),
         NavItem("Ideas", Icons.Default.Build, "ideas"),

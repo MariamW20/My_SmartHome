@@ -82,6 +82,7 @@ fun ThingsPage(navController: NavHostController, modifier: Modifier = Modifier) 
             Text(
                 text = "It looks like we didn't discover any devices.\n",
                 fontSize = 20.sp,
+                textAlign = TextAlign.Center,
                 color = Color.Gray
             )
             Text(text = "Try an option below", fontSize = 20.sp, color = Color.Gray)

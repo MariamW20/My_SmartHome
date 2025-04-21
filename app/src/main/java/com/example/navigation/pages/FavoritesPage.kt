@@ -80,10 +80,10 @@ fun FavoritesPage(navController: NavHostController, modifier: Modifier = Modifie
             ) {
                 FloatingActionButton(
                     onClick = { /* TODO: Navigate to add favorite screen if exists */ },
-                    containerColor = Color.Blue,
+                    containerColor = Color(0xFF03A9F4),
                     shape = RoundedCornerShape(50.dp),
                     modifier = Modifier
-                        .align(Alignment.CenterEnd)
+                        .align(Alignment.BottomEnd)
                         .padding(16.dp)
                 ) {
                     Icon(Icons.Default.Add, contentDescription = "Add")
@@ -96,7 +96,7 @@ fun FavoritesPage(navController: NavHostController, modifier: Modifier = Modifie
                 .fillMaxSize()
                 .padding(paddingValues)
                 .padding(horizontal = 16.dp)
-                .background(Color.White), // ✅ Make content area white
+                .background(Color.White),
             contentAlignment = Alignment.Center
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -104,7 +104,7 @@ fun FavoritesPage(navController: NavHostController, modifier: Modifier = Modifie
                     imageVector = Icons.Default.Star,
                     contentDescription = "Star",
                     tint = Color.Gray,
-                    modifier = Modifier.size(80.dp)
+                    modifier = Modifier.size(100.dp)
                 )
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(text = "No Favorites!", fontSize = 30.sp, color = Color.DarkGray)
